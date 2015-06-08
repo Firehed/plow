@@ -15,4 +15,9 @@ class CommandInstaller extends LibraryInstaller
     {
       return 'plow-command' === $packageType;
     }
+
+    protected function getPackageBasePath(PackageInterface $package)
+    {
+      return 'plow-commands/'.$package->getPrettyName();
+    }
 }
