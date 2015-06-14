@@ -15,6 +15,7 @@ class CommandInstaller extends LibraryInstaller
     const COMMAND_DIR = 'plow-commands/';
     const COMMAND_FILE = 'commands.json';
     private $commands = [];
+    private $madeChanges = false;
 
     /**
      * {@inheritDoc}
@@ -31,7 +32,9 @@ class CommandInstaller extends LibraryInstaller
 
     public function __destruct()
     {
-        $this->writeCommandList();
+        if ($this->madeChanges) {
+            $this->writeCommandList();
+        }
     }
 
     /**
@@ -130,11 +133,13 @@ class CommandInstaller extends LibraryInstaller
     private function addCommandsFromPackage(PackageInterface $package)
     {
         $this->commands[$package->getPrettyName()] = (array)$package->getExtra();
+        $this->madeChanges = true;
     }
 
     private function removeCommandsFromPackage(PackageInterface $package)
     {
         unset($this->commands[$package->getPrettyName()]);
+        $this->madeChanges = true;
     }
 
 
