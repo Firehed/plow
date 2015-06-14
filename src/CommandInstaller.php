@@ -105,17 +105,6 @@ class CommandInstaller extends LibraryInstaller
         foreach ($this->classes as $package => $packageClasses) {
             $classes = array_merge($classes, $packageClasses);
         }
-        foreach ($classes as $className) {
-            // class_exists and check that it implements the right interface
-            //
-            // Instanciate class
-            //
-            // Call a method to get the actual command name
-            //
-            // Write this to the file in such a way that the actual binary can
-            // dispatch back to that class
-        }
-
         $data['classes'] = $classes;
         $data['@gener'.'ated'] = time();
         file_put_contents(self::COMMAND_DIR.self::COMMAND_FILE, json_encode($data));
