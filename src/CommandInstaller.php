@@ -14,7 +14,7 @@ class CommandInstaller extends LibraryInstaller
 
     const COMMAND_DIR = 'plow-commands/';
     const COMMAND_FILE = 'commands.json';
-    private $commands = [];
+    private $classes = [];
     private $madeChanges = false;
 
     /**
@@ -102,17 +102,17 @@ class CommandInstaller extends LibraryInstaller
             return;
         }
         $data = json_decode(file_get_contents($file), true);
-        $this->commands = $data['package-info'];
+        $this->classes = $data['package-info'];
     }
 
     private function writeCommandList()
     {
         $data = [
-            'package-info' => $this->commands,
+            'package-info' => $this->classes,
         ];
         $classes = [];
-        foreach ($this->commands as $package => $commands) {
-            $classes = array_merge($classes, $commands);
+        foreach ($this->classes as $package => $packageClasses) {
+            $classes = array_merge($classes, $packageClasses);
         }
         foreach ($classes as $className) {
             // class_exists and check that it implements the right interface
@@ -132,13 +132,13 @@ class CommandInstaller extends LibraryInstaller
 
     private function addCommandsFromPackage(PackageInterface $package)
     {
-        $this->commands[$package->getPrettyName()] = (array)$package->getExtra();
+        $this->classes[$package->getPrettyName()] = (array)$package->getExtra();
         $this->madeChanges = true;
     }
 
     private function removeCommandsFromPackage(PackageInterface $package)
     {
-        unset($this->commands[$package->getPrettyName()]);
+        unset($this->classes[$package->getPrettyName()]);
         $this->madeChanges = true;
     }
 
