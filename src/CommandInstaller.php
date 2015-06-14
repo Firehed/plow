@@ -42,7 +42,7 @@ class CommandInstaller extends LibraryInstaller
      */
     public function supports($packageType)
     {
-      return 'plow-command' === $packageType;
+        return 'plow-command' === $packageType;
     }
 
     /**
@@ -92,7 +92,7 @@ class CommandInstaller extends LibraryInstaller
 
     protected function getPackageBasePath(PackageInterface $package)
     {
-      return self::COMMAND_DIR.$package->getPrettyName();
+        return self::COMMAND_DIR.$package->getPrettyName();
     }
 
     private function loadCommandList()
@@ -141,6 +141,5 @@ class CommandInstaller extends LibraryInstaller
         unset($this->classes[$package->getPrettyName()]);
         $this->madeChanges = true;
     }
-
 
 }
