@@ -19,8 +19,12 @@ class CommandInstaller extends LibraryInstaller
     /**
      * {@inheritDoc}
      */
-    public function __construct(IOInterface $io, Composer $composer, $type = 'library', Filesystem $filesystem = null)
-    {
+    public function __construct(
+        IOInterface $io,
+        Composer $composer,
+        $type = 'library',
+        Filesystem $filesystem = null
+    ) {
         parent::__construct($io, $composer, $type, $filesystem);
         $this->loadCommandList();
     }
@@ -60,15 +64,14 @@ class CommandInstaller extends LibraryInstaller
      *
      * @throws InvalidArgumentException if $initial package is not installed
      */
-    public function update(InstalledRepositoryInterface $repo,
+    public function update(
+        InstalledRepositoryInterface $repo,
         PackageInterface $initial,
-        PackageInterface $target)
-    {
+        PackageInterface $target
+    ) {
         parent::update($repo, $initial, $target);
         $this->addCommandsFromPackage($package);
     }
-
-
 
     /**
      * Uninstalls specific package.
@@ -76,9 +79,10 @@ class CommandInstaller extends LibraryInstaller
      * @param InstalledRepositoryInterface $repo    repository in which to check
      * @param PackageInterface             $package package instance
      */
-    public function uninstall(InstalledRepositoryInterface $repo,
-        PackageInterface $package)
-    {
+    public function uninstall(
+        InstalledRepositoryInterface $repo,
+        PackageInterface $package
+    ) {
         parent::uninstall($repo, $package);
         $this->removeCommandsFromPackage($package);
     }
