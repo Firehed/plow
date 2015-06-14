@@ -46,10 +46,7 @@ class CommandInstaller extends LibraryInstaller
     }
 
     /**
-     * Installs specific package.
-     *
-     * @param InstalledRepositoryInterface $repo    repository in which to check
-     * @param PackageInterface             $package package instance
+     * {@inheritDoc}
      */
     public function install(InstalledRepositoryInterface $repo,
         PackageInterface $package)
@@ -59,13 +56,7 @@ class CommandInstaller extends LibraryInstaller
     }
 
     /**
-     * Updates specific package.
-     *
-     * @param InstalledRepositoryInterface $repo    repository in which to check
-     * @param PackageInterface             $initial already installed package version
-     * @param PackageInterface             $target  updated version
-     *
-     * @throws InvalidArgumentException if $initial package is not installed
+     * {@inheritDoc}
      */
     public function update(
         InstalledRepositoryInterface $repo,
@@ -77,10 +68,7 @@ class CommandInstaller extends LibraryInstaller
     }
 
     /**
-     * Uninstalls specific package.
-     *
-     * @param InstalledRepositoryInterface $repo    repository in which to check
-     * @param PackageInterface             $package package instance
+     * {@inheritDoc}
      */
     public function uninstall(
         InstalledRepositoryInterface $repo,
@@ -90,6 +78,9 @@ class CommandInstaller extends LibraryInstaller
         $this->removeCommandsFromPackage($package);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getPackageBasePath(PackageInterface $package)
     {
         return self::COMMAND_DIR.$package->getPrettyName();
