@@ -65,7 +65,8 @@ class CommandInstaller extends LibraryInstaller
         PackageInterface $target
     ) {
         parent::update($repo, $initial, $target);
-        $this->addCommandsFromPackage($package);
+        $this->removeCommandsFromPackage($initial);
+        $this->addCommandsFromPackage($target);
     }
 
     /**
