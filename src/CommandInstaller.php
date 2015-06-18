@@ -134,7 +134,7 @@ class CommandInstaller extends LibraryInstaller
                 continue;
             }
             $commandClass = new $className();
-            $commands[$className] = $commandClass->getCommandName();
+            $commands[$className] = (array)$commandClass->getCommandName();
         }
         return $commands;
     }
@@ -142,17 +142,19 @@ class CommandInstaller extends LibraryInstaller
     private static function buildTrieFromCommandMap(array $commandMap)
     {
         $sub = [];
-        foreach ($commandMap as $className => $command) {
-            $commandWords = explode(' ', strtolower($command));
-            $pos =& $sub;
-            // Index into the output array by word
-            foreach ($commandWords as $word) {
-                if (!isset($pos[$word])) {
-                    $pos[$word] = [];
+        foreach ($commandMap as $className => $commands) {
+            foreach ($commands as $command) {
+                $commandWords = explode(' ', strtolower($command));
+                $pos =& $sub;
+                // Index into the output array by word
+                foreach ($commandWords as $word) {
+                    if (!isset($pos[$word])) {
+                        $pos[$word] = [];
+                    }
+                    $pos =& $pos[$word];
                 }
-                $pos =& $pos[$word];
+                $pos[self::TRIE_VALUE_KEY] = $className;
             }
-            $pos[self::TRIE_VALUE_KEY] = $className;
         }
         $base['plow'] = $sub;
         $base['plow'][self::TRIE_VALUE_KEY] = 'Firehed\Plow\Plow';

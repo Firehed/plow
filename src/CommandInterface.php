@@ -6,7 +6,7 @@ interface CommandInterface
 {
 
     /**
-     * @return string The command, excluding "plow"
+     * @return array<string>|string The command, excluding "plow"
      */
     public function getCommandName();
 
