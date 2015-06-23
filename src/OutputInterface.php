@@ -14,20 +14,21 @@ interface OutputInterface
 
     /**
      * Output the message to the console
-     * @param string message
+     * @param string $format sprintf-style format string
+     * @param mixed $arg,... sprintf-style arguments
      * @return self
      */
-    public function write($msg); // normal
-    public function writeLine($msg); // normal
+    public function write($format, ...$args); // normal
+    public function writeLine($format, ...$args); // normal
 
-    public function writeVerbose($msg); // v
-    public function writeVerboseLine($msg); // v
+    public function writeVerbose($format, ...$args); // v
+    public function writeVerboseLine($format, ...$args); // v
 
-    public function writeVeryVerbose($msg); // vv
-    public function writeVeryVerboseLine($msg); // vv
+    public function writeVeryVerbose($format, ...$args); // vv
+    public function writeVeryVerboseLine($format, ...$args); // vv
 
-    public function error($msg); // stderr
-    public function errorLine($msg); // stderr
+    public function error($format, ...$args); // stderr
+    public function errorLine($format, ...$args); // stderr
 
     /**
      * Debug any data type - it will attempt to coerce the data to a string:

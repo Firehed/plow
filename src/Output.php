@@ -22,46 +22,48 @@ class Output implements OutputInterface
         $this->output = $output;
     }
 
-    public function error($msg)
+    public function error($format, ...$args)
     {
+        $msg = sprintf($format, ...$args);
         $this->output->getErrorOutput()->write($msg);
         return $this;
     }
 
-    public function errorLine($msg)
+    public function errorLine($format, ...$args)
     {
-        $this->output->getErrorOutput()->write($msg.PHP_EOL);
+        $msg = sprintf($format.PHP_EOL, ...$args);
+        $this->output->getErrorOutput()->write($msg);
         return $this;
     }
 
-    public function write($msg)
+    public function write($format, ...$args)
     {
-        return $this->writeIf($msg, OI::VERBOSITY_NORMAL);
+        return $this->writeIf($format, OI::VERBOSITY_NORMAL, $args);
     }
 
-    public function writeLine($msg)
+    public function writeLine($format, ...$args)
     {
-        return $this->writeIf($msg.PHP_EOL, OI::VERBOSITY_NORMAL);
+        return $this->writeIf($format.PHP_EOL, OI::VERBOSITY_NORMAL, $args);
     }
 
-    public function writeVerbose($msg)
+    public function writeVerbose($format, ...$args)
     {
-        return $this->writeIf($msg, OI::VERBOSITY_VERBOSE);
+        return $this->writeIf($format, OI::VERBOSITY_VERBOSE, $args);
     }
 
-    public function writeVerboseLine($msg)
+    public function writeVerboseLine($format, ...$args)
     {
-        return $this->writeIf($msg.PHP_EOL, OI::VERBOSITY_VERBOSE);
+        return $this->writeIf($format.PHP_EOL, OI::VERBOSITY_VERBOSE, $args);
     }
 
-    public function writeVeryVerbose($msg)
+    public function writeVeryVerbose($format, ...$args)
     {
-        return $this->writeIf($msg, OI::VERBOSITY_VERY_VERBOSE);
+        return $this->writeIf($format, OI::VERBOSITY_VERY_VERBOSE, $args);
     }
 
-    public function writeVeryVerboseLine($msg)
+    public function writeVeryVerboseLine($format, ...$args)
     {
-        return $this->writeIf($msg.PHP_EOL, OI::VERBOSITY_VERY_VERBOSE);
+        return $this->writeIf($format.PHP_EOL, OI::VERBOSITY_VERY_VERBOSE, $args);
     }
 
     public function debug($mixed_msg)
@@ -81,12 +83,20 @@ class Output implements OutputInterface
         return $this;
     }
 
-    private function writeIf($msg, $level)
+    /**
+     * Conditionally write to the output based on the current verbosity level
+     *
+     * @param string sprintf-style format string
+     * @param int minimum verbosity level
+     * @param array<mixed> sprintf-style arguments
+     * @return self
+     */
+    private function writeIf($format, $level, array $args)
     {
         if ($level > $this->output->getVerbosity()) {
             return;
         }
-        $this->output->write($msg);
+        $this->output->write(sprintf($format, ...$args));
         return $this;
     }
 
