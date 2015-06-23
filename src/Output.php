@@ -75,7 +75,7 @@ class Output implements OutputInterface
         } elseif (is_object($mixed_msg) && method_exists($mixed_msg, '__toString')) {
             $msg = (string) $mixed_msg;
         } else {
-            $msg = print_r($msg, true);
+            $msg = print_r($mixed_msg, true);
         }
         $this->output->write($msg.PHP_EOL);
         return $this;
