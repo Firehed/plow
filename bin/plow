@@ -1,3 +1,123 @@
 #!/usr/bin/env php
 <?php
+error_reporting(-1);
+ini_set('display_errors', 1);
+
+// Composer's structure could have the autoloader in a few places relative to
+// this file. Copy the logic from the PHPUnit bin
+function _plow_define_autoloader() {
+    $locations = [
+        __DIR__ . '/../../../autoload.php',
+        __DIR__ . '/../vendor/autoload.php',
+    ];
+    foreach ($locations as $location) {
+        if (file_exists($location)) {
+            define('PLOW_COMPOSER_INSTALL', $location);
+            return true;
+        }
+    }
+    return false;
+}
+if (!_plow_define_autoloader()) {
+    fwrite(STDERR, 'Autoloader could not be found'.PHP_EOL);
+    exit(1);
+}
+require_once PLOW_COMPOSER_INSTALL;
+
+use Ulrichsg\Getopt\Getopt;
+use Symfony\Component\Console\Output as SymfonyOutput;
+use Firehed\Plow\PlowCLI;
+
+$trie = PlowCLI::getCommandTrie();
+
+// Search the trie with ARGV, and modify it so that the subcommands all look
+// like one giant command as related to argument passing.
+$argv[0] = 'plow';
+$cn = [];
+$i = 0;
+do {
+    $cmd = strtolower($argv[0]);
+    if (isset($trie[$cmd])) {
+        $trie = $trie[$cmd];
+        if (isset($trie['*'])) {
+            $class = $trie['*'];
+            $matched = $i;
+        }
+        $i++;
+        $cn[] = array_shift($argv);
+    }
+    else {
+        break;
+    }
+} while ($argv);
+
+$matched++; // Turn into a count from an offset
+$extras = array_slice($cn, $matched);
+$actual_command = array_slice($cn, 0, $matched);
+
+// Prepend them back on to the original argv
+while ($extras) {
+    array_unshift($argv, array_pop($extras));
+}
+array_unshift($argv, implode(' ', $actual_command));
+
+// Load the class from above, build get GETOPT values
+//echo "Found class: $class\n\n";
+$command_class = new $class();
+$banner = $command_class->getBanner();
+
+try {
+    $opt = new Getopt($command_class->getOptions() ?: null);
+    if ($banner) {
+        $opt->setBanner($banner.PHP_EOL);
+    }
+    $opt->addOptions(PlowCLI::getDefaultOptions());
+    $opt->parse();
+
+    if ($opt['help']) {
+        echo $command_class->getDescription().PHP_EOL.PHP_EOL;
+        echo $opt->getHelpText();
+        exit(0);
+    }
+    if ($opt['version']) {
+        echo 'VERSION';
+        exit(0);
+    }
+    $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_NORMAL;
+    if ($opt['quiet']) {
+        $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_QUIET;
+    } elseif ($v_count = $opt['verbose']) {
+        if ($v_count == 1) {
+            $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_VERBOSE;
+        }
+        elseif ($v_count == 2) {
+            $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_VERY_VERBOSE;
+        }
+        else {
+            $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_DEBUG;
+        }
+    }
+
+    //
+    // dispatch
+    $ret = $command_class->setOperands($opt->getOperands())
+        ->setOutput(new Firehed\Plow\Output(new SymfonyOutput\ConsoleOutput($verbosity)))
+        ->setOptionValues($opt->getOptions())
+        ->execute();
+    if ($ret > 255) $ret = 255;
+    exit($ret);
+
+} catch (UnexpectedValueException $e) {
+    // to STDERR
+    echo $e->getMessage();
+    echo "\n\n";
+    echo $opt->getHelpText();
+    exit(1);
+}
+catch (InvalidArgumentException $e) {
+    // to STDERR
+    echo $e;
+    echo 'There was an issue loading the subcommand.';
+    exit(255);
+}
 
