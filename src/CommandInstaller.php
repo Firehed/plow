@@ -12,9 +12,10 @@ use Composer\Repository\InstalledRepositoryInterface;
 class CommandInstaller extends LibraryInstaller
 {
 
-    const COMMAND_DIR = 'plow-commands/';
+    const COMMAND_DIR = 'vendor/firehed/plow-commands/';
     const COMMAND_FILE = 'commands.json';
     const TRIE_VALUE_KEY = '*';
+
     private $classes = [];
     private $madeChanges = false;
 
