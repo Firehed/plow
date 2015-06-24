@@ -17,6 +17,7 @@ class CommandInstaller extends LibraryInstaller
     const TRIE_VALUE_KEY = '*';
 
     private $classes = [];
+    private $loaded = false;
     private $madeChanges = false;
 
     /**
@@ -34,7 +35,7 @@ class CommandInstaller extends LibraryInstaller
 
     public function __destruct()
     {
-        if ($this->madeChanges) {
+        if ($this->madeChanges || !$this->loaded) {
             $this->writeCommandList();
         }
     }
@@ -97,6 +98,7 @@ class CommandInstaller extends LibraryInstaller
         }
         $data = json_decode(file_get_contents($file), true);
         $this->classes = $data['package-info'];
+        $this->loaded = true;
     }
 
     private function writeCommandList()
@@ -113,6 +115,7 @@ class CommandInstaller extends LibraryInstaller
         $data['classes'] = $classes;
         $data['command_trie'] = $trie;
         $data['@gener'.'ated'] = time();
+        mkdir(self::COMMAND_DIR, 0755, true);
         file_put_contents(self::COMMAND_DIR.self::COMMAND_FILE, json_encode($data));
     }
 
