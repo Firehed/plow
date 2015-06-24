@@ -115,7 +115,7 @@ class CommandInstaller extends LibraryInstaller
         $data['classes'] = $classes;
         $data['command_trie'] = $trie;
         $data['@gener'.'ated'] = time();
-        mkdir(self::COMMAND_DIR, 0755, true);
+        #mkdir(self::COMMAND_DIR, 0755, true);
         file_put_contents(self::COMMAND_DIR.self::COMMAND_FILE, json_encode($data));
     }
 
