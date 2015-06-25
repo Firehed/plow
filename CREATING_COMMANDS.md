@@ -10,6 +10,28 @@ See the [class docblocks](https://github.com/Firehed/plow/blob/master/src/Comman
 **Tip!** Plow core also includes `Firehed\Plow\CommandTrait` which implements some sane defaults for you.
 `use`ing it leaves you to provide only the command name, description, arguments, and execution; you can skip common meta-code like receiving argument values and the console output object.
 
+### Events
+While implementing the interface is enough to build a command successfully, it may be helpful to know the order in which the methods are called.
+
+During installation (e.g. `composer require example/some-command`):
+
+* `getCommandName()`
+
+During setup (argument validation, etc.):
+
+* `getBanner()`
+* `getOptions()`
+* `getDescription()` if `-h`/`--help` is called
+* `getSynopsis()` during `plow --list`
+
+During execution:
+
+* `setOutput()`
+* `setOperands()`
+* `setOptionValues()`
+* `execute()`
+
+
 ## Configure `composer.json`
 These sections all refer to top-level keys in `composer.json`.
 
@@ -27,6 +49,11 @@ This is what Plow uses to determine what classes to register during installation
 
 ### `autoload`
 You may follow any autoloading system that Composer supports (PSR-4 is strongly recommended); the only requirement is that any classes named in `extra` must be autoloadable.
+
+## Optional: register at Packagist
+
+If you are making a new Plow command for wider distrubution, you should register it at [Packagist](https://packagist.org).
+If it is for personal or internal use, this is not necessary, but you will probably have to specify its location in `repositories`.
 
 ## Sample `composer.json`
 This is the bare minimum you can include in your Composer manifest to have your class(es) register with Plow during installation.
