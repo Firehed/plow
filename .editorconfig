@@ -1,0 +1,34 @@
+; http://editorconfig.org/
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+max_line_length = 80
+trim_trailing_whitespace = true
+
+; Properties that aren't officially supported, but should be followed
+spaces_around_operators = true
+
+
+[*.{md,mdown,markdown}]
+max_line_length = 9999
+
+[*.php]
+indent_size = 4
+; Unofficial at this time. Follow PSR-2
+curly_bracket_next_line = true
+
+[bin/plow]
+; See *.php
+indent_size = 4
+curly_bracket_next_line = true
+
+[composer.json]
+indent_size = 4
+
+
