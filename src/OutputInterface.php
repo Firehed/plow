@@ -2,6 +2,8 @@
 
 namespace Firehed\Plow;
 
+use Exception;
+
 /**
  * This roughly translates the Symfony\Component\Console\Output\OutputInterface
  * into one far more useful in day-to-day use: it handles all of the verbosity
@@ -27,6 +29,7 @@ interface OutputInterface
     public function writeVeryVerbose($format, ...$args); // vv
     public function writeVeryVerboseLine($format, ...$args); // vv
 
+    public function exception(Exception $e); // stderr
     public function error($format, ...$args); // stderr
     public function errorLine($format, ...$args); // stderr
 

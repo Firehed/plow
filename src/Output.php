@@ -2,6 +2,7 @@
 
 namespace Firehed\Plow;
 
+use Exception;
 use Symfony\Component\Console\Output\OutputInterface as OI;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
@@ -31,6 +32,25 @@ class Output implements OutputInterface
     public function errorLine($format, ...$args)
     {
         $this->doError($format, $args, true);
+        return $this;
+    }
+
+    public function exception(Exception $e)
+    {
+        $head = sprintf('[%s]', get_class($e));
+        $body = $e->getMessage();
+        $width = max(strlen($head), strlen($body));
+
+        $fs = "<error>  %-{$width}s  </error>";
+        $err = $this->output->getErrorOutput();
+        $err->writeln(sprintf($fs, ''));
+        $err->writeln(sprintf($fs, $head));
+        $err->writeln(sprintf($fs, $body));
+        $err->writeln(sprintf($fs, ''));
+        if ($err->isDebug()) {
+            $err->writeln('Stack trace:');
+            $err->writeln($e->getTraceAsString());
+        }
         return $this;
     }
 
