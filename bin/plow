@@ -27,6 +27,7 @@ require_once PLOW_COMPOSER_INSTALL;
 use Ulrichsg\Getopt\Getopt;
 use Symfony\Component\Console\Output as SymfonyOutput;
 use Firehed\Plow\PlowCLI;
+use Firehed\Plow\Utilities;
 
 $trie = PlowCLI::getCommandTrie();
 
@@ -83,20 +84,8 @@ try {
         echo 'VERSION';
         exit(0);
     }
-    $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_NORMAL;
-    if ($opt['quiet']) {
-        $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_QUIET;
-    } elseif ($v_count = $opt['verbose']) {
-        if ($v_count == 1) {
-            $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_VERBOSE;
-        }
-        elseif ($v_count == 2) {
-            $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_VERY_VERBOSE;
-        }
-        else {
-            $verbosity = SymfonyOutput\OutputInterface::VERBOSITY_DEBUG;
-        }
-    }
+    $verbosity = Utilities::parseVerbosity((int)$opt['quiet'],
+        (int)$opt['verbose']);
 
     //
     // dispatch
