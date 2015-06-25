@@ -27,6 +27,7 @@
         "php": ">=5.6",
         "composer-plugin-api": "1.0.0",
         "ulrichsg/getopt-php": "~2.3",
-        "symfony/console": "^2.7"
+        "symfony/console": "^2.7",
+        "pimple/pimple": "^3.0"
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Firehed\Plow;
 
+use Ulrichsg\Getopt\Getopt;
+
 class PlowCLI
 {
 
@@ -64,6 +66,111 @@ class PlowCLI
             Option::withCount('V', 'version')
                 ->setDescription('Print command version and exit'),
         ];
+    }
+
+    /**
+     * Constructor
+     *
+     * @param array $argv The CLI argument values
+     * @param OutputInterface $console The output stream
+     */
+    public function __construct(array $argv, OutputInterface $console) {
+        $this->argv = $argv;
+        $this->console = $console;
+    }
+
+    /**
+     * The main logic block for dispatching the CLI to the implementation
+     * classes. Assuming it makes it all the way to the actual method cleanly,
+     * its return code will be propagated up.  Otherwise, RuntimeExceptions exit
+     * 1 (user error), LogicExceptions exit 2 (programmer error), and everything
+     * else exits 3 (doom)
+     *
+     * @return int The intended exit status cide
+     */
+    public function run() {
+        $trie = self::getCommandTrie();
+        $class = Utilities::searchTrieFromArgv($trie, $this->argv);
+        $cmd = new $class();
+        $banner = $cmd->getBanner();
+
+        try {
+            $opt = new Getopt();
+            $opt->addOptions($cmd->getOptions());
+            $opt->addOptions(self::getDefaultOptions());
+            if ($banner) $opt->setBanner($banner.PHP_EOL);
+            $opt->parse(implode(' ', $this->argv));
+        } catch (\UnexpectedValueException $e) {
+            // Unexpected CLI arguments
+            $this->console->exception($e);
+            $this->console->writeLine($opt->getHelpText());
+            return 1;
+        } catch (\InvalidArgumentException $e) {
+            // Command is broken - most likely duplicated arguments
+            $this->console->exception($e);
+            return 2;
+        } catch (\Exception $e) {
+            // Catch-all,
+            $this->console->exception($e);
+            return 3;
+        }
+
+        // Unfortunately we can't easily do this earlier. Native getopt() is
+        // useless on all subcommands, and the class implementation screams
+        // about unexpected values.
+        $v = Utilities::parseVerbosity($opt['q'],$opt['v']);
+        $this->console->setVerbosity($v);
+
+        if ($opt['help']) {
+            return $this->showHelp($cmd, $opt->getHelpText());
+        }
+        if ($opt['version']) {
+            return $this->showVersion();
+        }
+
+        try {
+            return $cmd
+                ->setOutput($this->console)
+                ->setOperands($opt->getOperands())
+                ->setOptionValues($opt->getOptions())
+                ->execute();
+        } catch (\RuntimeException $e) {
+            $this->console->exception($e);
+            $this->console->writeLine($opt->getHelpText());
+            return 1;
+        } catch (\LogicException $e) {
+            $this->console->exception($e);
+            return 2;
+        } catch (\Exception $e) {
+            $this->console->exception($e);
+            return 3;
+        }
+    }
+
+    /**
+     * Write the help text to the console
+     *
+     * @param CommandInterface $command The command for which to display text
+     * @param string $helptext FIXME this needs refactoring...
+     * @return int 0, always
+     */
+    private function showHelp(CommandInterface $command, $helpText)
+    {
+        $this->console->writeLine($command->getDescription())
+            ->writeLine('')
+            ->writeLine($helpText);
+
+        return 0;
+    }
+    /**
+     * Write the version to the console
+     *
+     * @return int 0, always
+     */
+    private function showVersion()
+    {
+        $this->console->writeLine('VERSION');
+        return 0;
     }
 
     private static function getDefaultCommands()

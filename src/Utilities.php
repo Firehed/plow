@@ -36,5 +36,48 @@ class Utilities
         }
     }
 
+    /**
+     * @param array $trie The structure to search
+     * @param &array $argv The command argument structure
+     * @return string The class name found in the trie
+     */
+    public static function searchTrieFromArgv(array $trie, array &$argv)
+    {
+        // Search the trie with ARGV, and modify it so that the subcommands all
+        // look like one giant command as related to argument passing.
+        $argv[0] = 'plow';
+        $cn = [];
+        $i = 0;
+        do {
+            $cmd = strtolower($argv[0]);
+            if (isset($trie[$cmd])) {
+                $trie = $trie[$cmd];
+                if (isset($trie['*'])) {
+                    $class = $trie['*'];
+                    $matched = $i;
+                }
+                $i++;
+                $cn[] = array_shift($argv);
+            }
+            else {
+                break;
+            }
+        } while ($argv);
+
+        $matched++; // Turn into a count from an offset
+        $extras = array_slice($cn, $matched);
+        $actual_command = array_slice($cn, 0, $matched);
+
+        // Prepend them back on to the original argv
+        while ($extras) {
+            array_unshift($argv, array_pop($extras));
+        }
+//        array_unshift($argv, implode(' ', $actual_command));
+        $_SERVER['PHP_SELF'] = implode(' ', $actual_command);
+
+        return $class;
+
+    }
+
 
 }
