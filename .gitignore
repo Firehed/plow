@@ -3,3 +3,7 @@
 
 # PHPDocumentor
 /output/
+
+# Third-party commands
+/installed_commands/commands.json
+/installed_commands/**/
