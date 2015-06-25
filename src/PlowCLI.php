@@ -27,7 +27,7 @@ class PlowCLI
             // Plow will be at vendor/firehed/plow/bin/plow
             // Commands are installed to vendor/firehed/plow/commands/...
             $plow_basedir = dirname(dirname(self::$plow));
-            $cmd_dir = $plow_basedir.'/commands';
+            $cmd_dir = $plow_basedir.'/installed_commands';
             $file = $cmd_dir.'/commands.json';
             if (!file_exists($file) || !is_readable($file)) {
                 // Warn about no commands?
