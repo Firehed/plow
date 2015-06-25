@@ -44,6 +44,12 @@ class Output implements OutputInterface
         $this->output->getErrorOutput()->write($msg);
     }
 
+    public function setVerbosity($level)
+    {
+        $this->output->setVerbosity($level);
+        return $this;
+    }
+
     public function write($format, ...$args)
     {
         return $this->writeIf($format, OI::VERBOSITY_NORMAL, $args);

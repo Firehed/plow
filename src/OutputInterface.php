@@ -30,6 +30,7 @@ interface OutputInterface
     public function error($format, ...$args); // stderr
     public function errorLine($format, ...$args); // stderr
 
+    public function setVerbosity($level);
     /**
      * Debug any data type - it will attempt to coerce the data to a string:
      * __toString() on objects where the method exists, (string) on scalars, and
