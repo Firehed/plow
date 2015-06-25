@@ -24,16 +24,24 @@ class Output implements OutputInterface
 
     public function error($format, ...$args)
     {
-        $msg = sprintf($format, ...$args);
-        $this->output->getErrorOutput()->write($msg);
+        $this->doError($format, $args, false);
         return $this;
     }
 
     public function errorLine($format, ...$args)
     {
-        $msg = sprintf($format.PHP_EOL, ...$args);
-        $this->output->getErrorOutput()->write($msg);
+        $this->doError($format, $args, true);
         return $this;
+    }
+
+    private function doError($format, $args, $add_newline)
+    {
+        $format = '%s'.$format.'%s%s';
+        array_unshift($args, '<error>');
+        $args[] = '</error>';
+        $args[] = $add_newline ? PHP_EOL : '';
+        $msg = sprintf($format, ...$args);
+        $this->output->getErrorOutput()->write($msg);
     }
 
     public function write($format, ...$args)
