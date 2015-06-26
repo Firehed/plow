@@ -12,6 +12,11 @@ interface CommandInterface
     public function execute();
 
     /**
+     * @return array Command aliases
+     */
+    public function getAliases();
+
+    /**
      * Generate the 'usage' banner. Can include a single %s for the command
      * name. Does NOT require a trailing newline. An empty return value will
      * cause the default banner to be used.
@@ -23,7 +28,7 @@ interface CommandInterface
     public function getBanner();
 
     /**
-     * @return array<string>|string The command, excluding "plow"
+     * @return string The command, excluding "plow"
      */
     public function getCommandName();
 

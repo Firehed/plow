@@ -16,13 +16,15 @@ While implementing the interface is enough to build a command successfully, it m
 During installation (e.g. `composer require example/some-command`):
 
 * `getCommandName()`
+* `getAliases()`
 
 During setup (argument validation, etc.):
 
 * `getBanner()`
 * `getOptions()`
-* `getDescription()` if `-h`/`--help` is called
+* `getDescription()` if `-h`/`--help` is used
 * `getSynopsis()` during `plow --list`
+* `getCommandName()` and `getVersion()` of `-V/--version` is used
 
 During execution:
 

@@ -18,6 +18,14 @@ trait CommandTrait
     protected $output;
 
     /**
+     * @return array
+     */
+    public function getAliases()
+    {
+        return [];
+    }
+
+    /**
      * Default to the standard usage banner
      *
      * @return string

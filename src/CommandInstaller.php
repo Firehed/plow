@@ -139,7 +139,11 @@ class CommandInstaller extends LibraryInstaller
                 continue;
             }
             $commandClass = new $className();
-            $commands[$className] = (array)$commandClass->getCommandName();
+            $names = array_merge(
+                [$commandClass->getCommandName()],
+                $commandClass->getAliases()
+            );
+            $commands[$className] = $names;
         }
         return $commands;
     }
