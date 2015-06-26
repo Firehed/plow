@@ -125,7 +125,7 @@ class PlowCLI
             return $this->showHelp($cmd, $opt->getHelpText());
         }
         if ($opt['version']) {
-            return $this->showVersion();
+            return $this->showVersion($cmd);
         }
 
         try {
@@ -165,11 +165,16 @@ class PlowCLI
     /**
      * Write the version to the console
      *
+     * @param CommandInterface $command The command the version will be
+     *                                  displayed for
      * @return int 0, always
      */
-    private function showVersion()
+    private function showVersion(CommandInterface $command)
     {
-        $this->console->writeLine('VERSION');
+        $this->console->writeLine('plow%s%s %s',
+            $command->getCommandName() ? ' ' : '',
+            $command->getCommandName(),
+            $command->getVersion());
         return 0;
     }
 

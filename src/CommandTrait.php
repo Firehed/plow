@@ -28,6 +28,28 @@ trait CommandTrait
     }
 
     /**
+     * Get the version from Git info
+     *
+     * @return string
+     */
+    public function getVersion()
+    {
+        // __FILE__ and __DIR__ magic constants aren't the values for the class
+        // using this trait (as expected), so this uses reflection to determine
+        // the source file of the implementing class.
+        $rc = new \ReflectionClass($this);
+        $path = $rc->getFileName();
+        $cwd = getcwd();
+        chdir(dirname($path));
+        $version = trim(`git describe --tags 2>/dev/null`);
+        chdir($cwd);
+        if (!$version) {
+            $version = 'dev';
+        }
+        return $version;
+    }
+
+    /**
      * Null-safe operand access, by numeric index
      *
      * @return ?string

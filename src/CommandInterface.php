@@ -64,6 +64,13 @@ interface CommandInterface
     public function getSynopsis();
 
     /**
+     * Get the command version
+     *
+     * @return string
+     */
+    public function getVersion();
+
+    /**
      * Inject the CLI operands to the command
      * @param array<string> all of the space-separated arguments
      * @return self
