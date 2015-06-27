@@ -171,10 +171,15 @@ class PlowCLI
      */
     private function showVersion(CommandInterface $command)
     {
+        $config = self::loadCommands();
+        $classes = $config['classes'];
+        $package = $classes[get_class($command)];
+        $package_info = $config['package-info'][$package];
+        $version = $package_info['version'];
         $this->console->writeLine('plow%s%s %s',
             $command->getCommandName() ? ' ' : '',
             $command->getCommandName(),
-            $command->getVersion());
+            $version);
         return 0;
     }
 
