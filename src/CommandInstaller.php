@@ -16,9 +16,13 @@ class CommandInstaller extends LibraryInstaller
     const COMMAND_FILE = 'commands.json';
     const TRIE_VALUE_KEY = '*';
 
-    private $classes = [];
     private $loaded = false;
     private $madeChanges = false;
+
+    /**
+     * Array of packages to the Plow command classes they provide
+     */
+    private $packages = [];
 
     /**
      * {@inheritDoc}
@@ -97,17 +101,17 @@ class CommandInstaller extends LibraryInstaller
             return;
         }
         $data = json_decode(file_get_contents($file), true);
-        $this->classes = $data['package-info'];
+        $this->packages = $data['package-info'];
         $this->loaded = true;
     }
 
     private function writeCommandList()
     {
         $data = [
-            'package-info' => $this->classes,
+            'package-info' => $this->packages,
         ];
         $classes = [];
-        foreach ($this->classes as $package => $packageClasses) {
+        foreach ($this->packages as $package => $packageClasses) {
             $classes = array_merge($classes, $packageClasses);
         }
         $commandMap = self::getCommandMapFromClasses($classes);
@@ -177,13 +181,13 @@ class CommandInstaller extends LibraryInstaller
             return;
         }
 
-        $this->classes[$package->getPrettyName()] = $extra['plow'];
+        $this->packages[$package->getPrettyName()] = $extra['plow'];
         $this->madeChanges = true;
     }
 
     private function removeCommandsFromPackage(PackageInterface $package)
     {
-        unset($this->classes[$package->getPrettyName()]);
+        unset($this->packages[$package->getPrettyName()]);
         $this->madeChanges = true;
     }
 
