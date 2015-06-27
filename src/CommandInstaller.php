@@ -35,6 +35,11 @@ class CommandInstaller extends LibraryInstaller
     ) {
         parent::__construct($io, $composer, $type, $filesystem);
         $this->loadCommandList();
+        // TODO: Build this list correctly
+        $this->packages['firehed/plow'] = [
+            'classes' => ['Firehed\Plow\Plow'],
+            'version' => 'dev-lol',
+        ];
     }
 
     public function __destruct()
@@ -157,7 +162,7 @@ class CommandInstaller extends LibraryInstaller
         $trie = [];
         foreach ($commandMap as $className => $commands) {
             foreach ($commands as $command) {
-                $commandWords = explode(' ', strtolower('plow '.$command));
+                $commandWords = explode(' ', strtolower(trim('plow '.$command)));
                 $pos =& $trie;
                 // Index into the output array by word
                 foreach ($commandWords as $word) {
@@ -169,7 +174,6 @@ class CommandInstaller extends LibraryInstaller
                 $pos[self::TRIE_VALUE_KEY] = $className;
             }
         }
-        $trie['plow'][self::TRIE_VALUE_KEY] = 'Firehed\Plow\Plow';
         return $trie;
     }
 
