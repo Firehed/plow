@@ -46,7 +46,8 @@ This will cause Composer to hand off the command to Plow during installation.
 This is not present by default, so you may have to add it.
 
 ### `extra`
-Set the `extra` key (add it if not present) to an array of your classes implementing `Firehed\Plow\CommandInterface`.
+Set the `extra` to a dictionary including the key `plow`.
+`plow` should be an array of your classes implementing `Firehed\Plow\CommandInterface`.
 This is what Plow uses to determine what classes to register during installation.
 
 ### `autoload`
@@ -67,16 +68,18 @@ This is the bare minimum you can include in your Composer manifest to have your 
     "require": {
         "firehed/plow": "^1.0.0"
     },
-	"autoload": {
-		"psr-4": {
-			"Example\\SomeCommand\\": [
-				"src"
-			]
-		}
-	},
-	"extra": [
-		"Firehed\\PlowGenerate\\Generate"
-	]
+    "autoload": {
+        "psr-4": {
+            "Example\\SomeCommand\\": [
+                "src"
+            ]
+        }
+    },
+    "extra": {
+        "plow": [
+            "Example\\SomeCommand\\CommandClass"
+        ]
+    }
 }
 
 ```

@@ -172,7 +172,12 @@ class CommandInstaller extends LibraryInstaller
 
     private function addCommandsFromPackage(PackageInterface $package)
     {
-        $this->classes[$package->getPrettyName()] = (array)$package->getExtra();
+        $extra = $package->getExtra();
+        if (empty($extra['plow']) || !is_array($extra['plow'])) {
+            return;
+        }
+
+        $this->classes[$package->getPrettyName()] = $extra['plow'];
         $this->madeChanges = true;
     }
 
