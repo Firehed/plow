@@ -111,8 +111,8 @@ class CommandInstaller extends LibraryInstaller
             'package-info' => $this->packages,
         ];
         $classes = [];
-        foreach ($this->packages as $package => $packageClasses) {
-            $classes = array_merge($classes, $packageClasses);
+        foreach ($this->packages as $package => $packageData) {
+            $classes = array_merge($classes, $packageData['classes']);
         }
         $commandMap = self::getCommandMapFromClasses($classes);
         $trie = self::buildTrieFromCommandMap($commandMap);
@@ -154,11 +154,11 @@ class CommandInstaller extends LibraryInstaller
 
     private static function buildTrieFromCommandMap(array $commandMap)
     {
-        $sub = [];
+        $trie = [];
         foreach ($commandMap as $className => $commands) {
             foreach ($commands as $command) {
-                $commandWords = explode(' ', strtolower($command));
-                $pos =& $sub;
+                $commandWords = explode(' ', strtolower('plow '.$command));
+                $pos =& $trie;
                 // Index into the output array by word
                 foreach ($commandWords as $word) {
                     if (!isset($pos[$word])) {
@@ -169,9 +169,8 @@ class CommandInstaller extends LibraryInstaller
                 $pos[self::TRIE_VALUE_KEY] = $className;
             }
         }
-        $base['plow'] = $sub;
-        $base['plow'][self::TRIE_VALUE_KEY] = 'Firehed\Plow\Plow';
-        return $base;
+        $trie['plow'][self::TRIE_VALUE_KEY] = 'Firehed\Plow\Plow';
+        return $trie;
     }
 
     private function addCommandsFromPackage(PackageInterface $package)
@@ -181,7 +180,10 @@ class CommandInstaller extends LibraryInstaller
             return;
         }
 
-        $this->packages[$package->getPrettyName()] = $extra['plow'];
+        $this->packages[$package->getPrettyName()] = [
+            'version' => $package->getPrettyVersion(),
+            'classes' => $extra['plow'],
+        ];
         $this->madeChanges = true;
     }
 
