@@ -117,7 +117,9 @@ class CommandInstaller extends LibraryInstaller
         ];
         $classes = [];
         foreach ($this->packages as $package => $packageData) {
-            $classes = array_merge($classes, $packageData['classes']);
+            foreach ($packageData['classes'] as $class) {
+                $classes[$class] = $package;
+            }
         }
         $commandMap = self::getCommandMapFromClasses($classes);
         $trie = self::buildTrieFromCommandMap($commandMap);
@@ -139,7 +141,7 @@ class CommandInstaller extends LibraryInstaller
         // should always be set correctly for this to work as expected.
         require 'vendor/autoload.php';
         $commands = [];
-        foreach ($classes as $className) {
+        foreach ($classes as $className => $package) {
             if (!class_exists($className)) {
                 continue;
             }

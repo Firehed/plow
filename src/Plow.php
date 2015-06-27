@@ -47,7 +47,7 @@ class Plow implements CommandInterface
 
         $cfg = PlowCLI::loadCommands();
         $out = [];
-        foreach ($cfg['classes'] as $className) {
+        foreach ($cfg['classes'] as $className => $package) {
             if (!class_exists($className)) continue;
             $class = new $className();
             $cname = current((array)$class->getCommandName());
